@@ -2,6 +2,7 @@ const global = {
   currentPage: window.location.pathname,
 };
 
+// Display popular movies cards om movies page
 async function displayPopularMovies() {
   const { results } = await fetchAPIData('/movie/popular');
   const cardsContainer = document.querySelector('#popular-movies');
@@ -25,13 +26,47 @@ async function displayPopularMovies() {
             }
           </a>
           <div class="card-body">
-            <h5 class="card-title"${movie.title}</h5>
+            <h5 class="card-title">${movie.title}</h5>
             <p class="card-text">
-              <small class="text-muted">${movie.release_date}</small>
+              <small class="text-muted">Release date: ${movie.release_date}</small>
             </p>
           </div>
     `;
     cardsContainer.appendChild(movieEl);
+  })
+}
+
+// Display popular tv shows cards om tv shows page
+async function displayPopularShows() {
+  const { results } = await fetchAPIData('/tv/popular');
+  const cardsContainer = document.querySelector('#popular-shows');
+  results.forEach(show => {
+    const showEl = document.createElement('div');
+    showEl.classList.add('card');
+    showEl.innerHTML = `
+          <a href="movie-details.html?id=${show.id}">
+            ${ 
+              show.poster_path 
+              ? `<img
+              src="https://image.tmdb.org/t/p/w500${show.poster_path}"
+              class="card-img-top"
+              alt="${show.name}"
+            />` 
+            : `<img
+              src="images/no-image.jpg"
+              class="card-img-top"
+              alt="${show.name}"
+            />`
+            }
+          </a>
+          <div class="card-body">
+            <h5 class="card-title">${show.name}</h5>
+            <p class="card-text">
+              <small class="text-muted">Air date: ${show.first_air_date}</small>
+            </p>
+          </div>
+    `;
+    cardsContainer.appendChild(showEl);
   })
 }
 
@@ -75,10 +110,10 @@ function init() {
   switch(global.currentPage) {
     case '/':
     case '/index.html':
-      console.log('Home');
+      displayPopularMovies();
       break;
     case '/shows.html':
-      console.log('Shows');
+      displayPopularShows();
       break;
     case '/movie-details.html':
       console.log('Movie Details');
@@ -92,7 +127,6 @@ function init() {
   }
 
   highlightActiveLink();
-  displayPopularMovies()
 }
 
 document.addEventListener('DOMContentLoaded', init)
