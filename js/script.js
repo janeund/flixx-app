@@ -36,7 +36,7 @@ async function displayPopularMovies() {
   })
 }
 
-// Display popular tv shows cards om tv shows page
+// Display popular tv shows cards on tv shows page
 async function displayPopularShows() {
   const { results } = await fetchAPIData('/tv/popular');
   const cardsContainer = document.querySelector('#popular-shows');
@@ -70,6 +70,7 @@ async function displayPopularShows() {
   })
 }
 
+// Display movies details on movie details page
 async function displayMovieDetails() {
   const movieID = window.location.search.split('=')[1];
   const moviesContainer = document.querySelector('#movie-details')
@@ -130,6 +131,7 @@ async function displayMovieDetails() {
   moviesContainer.appendChild(movieInner);
 }
 
+// Display  tv shows details on tv show details page
 async function displayShowDetails() {
   const showID = window.location.search.split('=')[1];
   const showsContainer = document.querySelector('#show-details')
@@ -188,6 +190,51 @@ async function displayShowDetails() {
   showsContainer.appendChild(showInner);
 }
 
+// Display slider
+async function displaySlider() {
+  const { results } = await fetchAPIData('movie/now_playing');
+  results.forEach(movie => {
+    const swiperWrapper = document.querySelector('.swiper-wrapper');
+    const swiperSlide = document.createElement('div');
+    swiperSlide.classList.add('swiper-slide');
+    swiperSlide.innerHTML = `
+    <a href="movie-details.html?id=${movie.id}">
+    <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt=${movie.title}  />
+    </a>
+    <h4 class="swiper-rating">
+    <i class="fas fa-star text-secondary"></i> ${movie.vote_average} / 10
+    </h4>
+    `
+    swiperWrapper.appendChild(swiperSlide);
+
+  })
+  initSwiper();
+}
+
+// Swiper initialization
+function initSwiper(){
+  const swiper = new Swiper('.swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    freeMode: true,
+    loop: true,
+    autoplay: {
+      delay: 4000,
+      disableOnInteraction: false
+    },
+    breakpoints: {
+      500: {
+        slidesPerView: 2,
+      },
+      700: {
+        slidesPerView: 3,
+      },
+      1200: {
+        slidesPerView: 4,
+      }
+    }
+  });
+}
 
 // Display bakhdrop on details pages 
 function displayBackgroundImage(type, backgroundPath) {
@@ -256,6 +303,7 @@ function init() {
   switch(global.currentPage) {
     case '/':
     case '/index.html':
+      displaySlider();
       displayPopularMovies();
       break;
     case '/shows.html':
